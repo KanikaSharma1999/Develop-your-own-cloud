@@ -1,0 +1,112 @@
+Name: docker -oc
+image : amazon linux
+connect: 
+sudo su -
+
+yum install docker
+systemctl start docker
+systemctl enable docker  //to make docker permanent
+
+Cliet engine : ip:20
+front end : ip: 100
+
+yum install httpd
+systemctl enable httpd --now
+cd /var/www/cgi-bin/
+ls
+Security group inbound rules
+we need to implement sudo we are running with the power of apache
+vim /etc/sudoers
+
+apache ALL=(ALL) NOPASSWD:ALL
+python3
+//for different fecility create different api create different file
+//docker image file 
+vim docker_image_download.py
+-----------------------------------------
+#!/usr/bin/python3
+
+print("Content-type: text/html")
+
+print()
+
+import subprocess
+
+cmd=" sudo docker pull centos:7"
+output= subprocess.getoutput(cmd)
+
+print("Image download" + output)
+-------------------------------------------
+chmod +x docker_image_download.py
+
+
+
+
+
+curl http://ip/cgi-bin/docker_image_download.py
+
+
+-------------------------------------------------------
+Python to store variable 
+
+x=5
+print("Hi i am x")
+
+//format function is used to store the value of the variable
+//having a place holder {}
+
+y=10
+
+print("hi i m {} and {}".format(x,y) )
+
+
+
+-----------------------------------------------------------
+#!/usr/bin/python3
+
+print("Content-type: text/html")
+
+print()
+
+import subprocess
+image_name="centos"
+image_tag="7"
+
+cmd="sudo docker pull {}:{}".format(image_name,image_tag)
+output= subprocess.getoutput(cmd)
+
+print("Image download" + output)
+
+--------------------------------------------------
+chmod +x docker_image_download.py
+
+curl http://ip/cgi-bin/docker_image_download.py
+
+-----------------------------------------------------------
+#!/usr/bin/python3
+
+print("Content-type: text/html")
+
+print()
+
+import subprocess
+import cgi
+
+form = cgi.FieldStorage()
+
+
+image_name=form.getvalue("image")
+image_tag=form.getvalue("tag")
+
+cmd="sudo docker pull {}:{}".format(image_name,image_tag)
+output= subprocess.getoutput(cmd)
+
+print("Image download" + output)
+
+--------------------------------------------------
+chmod +x docker_image_download.py
+
+curl "http://ip/cgi-bin/docker_image_download.py?image=ubuntu&tag=14.04"
+extra
+//to remove any file in linux
+rm docker_image_download.py
